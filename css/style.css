@@ -32,3 +32,16 @@ textarea {
     0 0 20px #edf8ff,
     0 0 0.40px #edf8ff;
 }
+
+#timerView {
+    color: #aaa;
+    margin: 10px;
+    float: right;
+    font-size: 2em;
+}
+
+#progressbar {
+    margin: 0px;
+    width: 200px;
+    height: 8px;
+}
