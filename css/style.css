@@ -2,6 +2,16 @@ body {
     background-color: rgb(36, 40,46);
 }
 
+#container {
+    width: 1024px;
+    margin: 0 auto;
+}
+
+#code {
+    width: 400px;
+    float: left;
+}
+
 textarea {
     background-color: rgb(36, 40,46);
     border: 0;
@@ -21,9 +31,9 @@ textarea {
 }
 
 #loc {
-    position: absolute;
-    left: 140px;
-    top: 250px;
+    position: relative; /* 相対座標 */
+    left: 150px;
+    top: -300px;
     font-size: 3em;
     font-family: Arial, sans-serif;
     color: rgb(14, 26, 45);
@@ -33,10 +43,147 @@ textarea {
     0 0 0.40px #edf8ff;
 }
 
-#timerView {
-    color: #aaa;
-    margin: 10px;
+#item {
+    position: relative;
+    width: 624px;
+    float: left;
+    top: auto;
+    left: -45px;
+}
+
+#status {
+
+}
+
+#member {
+
+}
+
+#shop {
+    width: 156px;
     float: right;
+}
+
+.button {
+	background-color: transparent;
+	border: 2px solid #fff;
+	color: #fff;
+	line-height: 50px; /* heightと同じで文字が中央に来る */
+    width: 180px;
+    height: 50px;
+    font-size: 0.6em;
+    margin: 5px; /* 他コンテンツとの余白 */
+    padding: 5px; /* borderと文字の間の余白 */
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: default;
+}
+.button:hover {
+	background-color: rgba(255, 255, 255, .2);
+}
+
+.itemname {
+    text-align: left; /* 文字左寄せ */
+    float: left;
+}
+
+.itemprice {
+    text-align: right;
+}
+
+/*
+.a_demo_five {
+	background-color:#3bb3e0;
+	width:150px;
+	display:inline-block;
+	font-size:12px;
+	text-decoration:none;
+	color:#fff;
+	position:relative;
+	margin-top:40px;
+	padding-bottom:10px;
+	padding-top:10px;
+	background-image: linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -ms-linear-gradient(bottom, rgb(44,160,202) 0%, rgb(62,184,229) 100%);
+	background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, rgb(44,160,202)),
+	color-stop(1, rgb(62,184,229))
+	);
+	-webkit-border-bottom-right-radius: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	-webkit-box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #156785, 0px 10px 5px #999;
+	-moz-box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #156785, 0px 10px 5px #999;
+	-o-box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #156785, 0px 10px 5px #999;
+	box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #156785, 0px 10px 5px #999;
+}
+
+.a_demo_five:active {
+	top:0px;
+	background-image: linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -ms-linear-gradient(bottom, rgb(62,184,229) 0%, rgb(44,160,202) 100%);
+	background-image: -webkit-gradient(
+	linear,
+	left bottom,
+	left top,
+	color-stop(0, rgb(62,184,229)),
+	color-stop(1, rgb(44,160,202))
+	);
+	-webkit-box-shadow: inset 0px 4px 1px #0b698b, 0px 2px 0px 0px #156785, 0px 5px 3px #999;
+	-moz-box-shadow: 0px 2px 0px 1px #156785, 0px 5px 3px #999;
+	-o-box-shadow: 0px 2px 0px 1px #156785, 0px 5px 3px #999;
+	box-shadow: inset 0px 4px 1px #0b698b, 0px 2px 0px 0px #156785, 0px 5px 3px #999;
+}
+.a_demo_five::before {
+	background-color:#fff;
+	background-image:url(../images/heart.gif);
+	background-repeat:no-repeat;
+	background-position:center center;
+	content:"";
+	width:150px;
+	height:60px;
+	position:absolute;
+	top:-40px;
+	left:0px;
+	margin-top:-11px;
+	z-index:-1;
+	-webkit-border-top-left-radius: 5px;
+	-webkit-border-top-right-radius: 5px;
+	-moz-border-radius-topleft: 5px;
+	-moz-border-radius-topright: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+.a_demo_five:active::before {
+	top: -40px;
+	-webkit-box-shadow: 0px 3px 0px #ccc;
+	-moz-box-shadow: 0px 3px 0px #ccc;
+	-o-box-shadow: 0px 3px 0px #ccc;
+	box-shadow: 0px 3px 0px #ccc;
+}
+*/
+#timer {
+    clear: both;
+}
+
+#timerView {
+    position: relative;
+    color: #aaa;
+    margin: -40px;
+    float: right;
+    left: -50px;
     font-size: 2em;
 }
 
