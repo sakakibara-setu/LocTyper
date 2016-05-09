@@ -14,14 +14,41 @@ TODO
 　　で，それをクリックした時に，絵が追加される処理と，LOCの周期増加イベントを追加．ステータスも更新．購入時にはLOCも減らす．LOCが足りなければ何もしない．
 　　LOCの周期増加イベントは，増加量分LOCを増やす．新たに購入されるたびに，増加量を増やす．ただしぎりぎり時間の場合は増やさない．
 
+エンジニアは購入後，動き出すまで時間が多少かかる．二人目からは指数的に減っていく．円のプログレスバーを半透明なエンジニアの上に置く感じか．
+botは購入後，即座に動き出すが，あまり書いてくれない．
+
+クリア時のスコア表示．
+タイムアップ時のスコア表示．
+リセット．
+吹き出し．
+エフェクト．
+ステータス．アイテム購入時にステータス画面更新．
+
+5秒ごとに前のメッセージと今のメッセージが違っているか判定し，違っていればフェードアニメーションで更新．
+
+・アイテム購入時．
+優れたエンジニアには，優れた環境を．
+あなたは何処のメーカー？
+失敗は少なく，多くを学べ．
+botは素直だが，多くはできない．
+エンジニアには”教育”が必要だ．
+たくさんいればいるほど，連携が難しい．人月の神話．
+マネジメントとは，”制御”だ．自分を理解することから始まる．
+少しずつ近づいている．
+・一定のLOC．
+順調な滑り出し．
+もう少し．
+・制限時間．
+まだ余裕．
+間に合うか．
+
 */
 
 /* LOCカウント部用-------------------------------------------- */
 var typeStart = true; // ゲーム開始判定．true=まだ始まっていない．
 var codeMaxLength = 30; // codeViewクリアまでの最大行数．
 var loc = 0; // LOC．これがclearLoc分貯まればクリア．
-var clearLoc = 100; // クリアに必要なloc．
-var digit = 1; // 現在のLOC桁数．
+var clearLoc = 30000; // クリアに必要なloc．
 /* タイマー部用-------------------------------------------- */
 var timer; // 周期実行関数用
 var bar; // プログレスバー用
@@ -29,12 +56,27 @@ var endTime = 180000; // barの終了までの時間．1000=1秒．
 var minute = 2; // タイマーの終了までの時間．分．
 var second = 60; // タイマーの終了までの時間．秒．
 /* アイテム部用-------------------------------------------- */
+var item = 0; // アイテム（物的資源）全体による加算値
+var item2 = 1; // itemを倍加する値
+var display = { pow: 1, price: 30, num:1 };
+var mouse = { pow: 1, price: 300, num:1 };
+var ide = { pow: 1, price: 500, num:1 };
+
+var coding; // 周期実行関数用
+var cps = 0; // 周期的にlocに加算される値．アイテム（人的資源）全体による加算値．
+var cps2 = 1; // cpsを倍加する値
+var bot = { pow: 10, price: 100, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
+var engineer = { pow: 80, price: 500, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
+var engineerNum = 0; // 現在のエンジニア数
+var maneger = { pow: 1, price: 1000, num:1 }; // pow:プロジェクトマネージャーによる乗算値（pow:1 = cps+100%），price:必要なLOC量．
+var ai = { pow:1, price: 999999999, num:1 };
 
 window.addEventListener("load", init);
 
 // 初期設定
 function init(){
     timerSetup();
+    itemSetup();
 }
 
 function timerSetup() {
@@ -83,25 +125,115 @@ function timerStart(){
     }, 1000);
 }
 
+function itemSetup(){
+    // で，それをクリックした時に，絵が追加される処理と，LOCの周期増加イベントを追加．ステータスも更新．購入時にはLOCも減らす．LOCが足りなければ何もしない．
+    // LOCの周期増加イベントは，増加量分LOCを増やす．新たに購入されるたびに，増加量を増やす．ただしぎりぎり時間の場合は増やさない．
+
+    // 周期実行関数．1秒ごとに実行．cpsずつ足す．初期値は0．
+    coding = setInterval(function() {
+        loc += cps * cps2;
+        $('#loc').text(loc);
+
+        if(loc > clearLoc-1){
+            alert("クリア！");
+            loc = 0;
+            $('#loc').text(loc);
+            typeStart = true;
+            document.getElementById("codeView").value = "_";
+            return;
+        }
+    }, 1000);
+
+    // 購入判定．ボタンクリック時にLOCが足りていれば，LOCを減らし，物的資源の場合はitemを，人的資源の場合はcpsを増加させる．
+    $('#button1').click(function(){
+        if((loc > display.price) && (display.num > 0)){
+            display.num--;
+            loc -= display.price;
+            item += display.pow; // キー効率が+1．まずはここから．
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．画面を2つにする
+            $('#codeView').css('height', 226 + 'px');
+            $('#dualDisplay').fadeIn();
+            $('#loc').css('top', -315 + 'px');
+
+            // 取り消し線
+            //$('#button1').css("background-color", "rgb(66, 65, 63)");
+        }
+    });
+    $('#button2').click(function(){
+        if((loc > mouse.price) && (mouse.num > 0)){
+            mouse.num--;
+            loc -= mouse.price;
+            item += mouse.pow; // キー効率を+1．あっても損はない．
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．マウスの画像を追加
+        }
+    });
+    $('#button3').click(function(){
+        if((loc > ide.price) && (ide.num > 0)){
+            ide.num--;
+            loc -= ide.price;
+            item2 += ide.pow; // キー効率を+100%．2倍だぞ！
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．画面をIDE化
+            $('#codeView').css('background-color', "#054114");
+            $('#dualDisplay').css('background-color', "#054114");
+        }
+    });
+    $('#button4').click(function(){
+        if((loc > bot.price) && (bot.num > 0)){
+            loc -= bot.price;
+            cps += bot.pow; // 1秒ごとに1LOC書いてくれる．10個まで．
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．botの画像を追加
+        }
+    });
+    $('#button5').click(function(){
+        if((loc > engineer.price) && (engineer.num > 0)){
+            loc -= engineer.price;
+            cps += engineer.pow; // 5LOC/sec．多けりゃいいってものでもない．
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+            // ただし残り1分では，cpsが増えない．メッセージを表示．
+
+            // エフェクト．エンジニアの画像を追加
+        }
+    });
+    $('#button6').click(function(){
+        if((loc > maneger.price) && (maneger.num > 0)){
+            loc -= maneger.price;
+            cps2 += maneger.pow; // lpsを+100%．すごい．
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．マネージャーの画像を追加
+        }
+    });
+    $('#button7').click(function(){
+        if((loc > ai.price) && (ai.num > 0)){
+            loc -= ai.price;
+            $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // エフェクト．辿り着いた者．
+        }
+    });
+}
+
 /* keyup時イベント．LOCのカウント，それに合わせたコード片の表示． */
 document.addEventListener("keyup", function(e){
     /* LOCカウント部 */
-    loc++; // TODO アイテムに応じて増加量を変更．
-    if(String(loc).length > digit){ // 桁数による位置調整
-        $("#loc").css("left", $('#loc').position().left - 7);
-        digit = String(loc).length;
-    }
+    loc += (1 + item)*item2; // アイテムに応じて増加量を変更．
     $('#loc').text(loc);
-    /*if(loc > clearLoc-1){ // クリア判定．5分立った時にするか，ある一定以上書き上げたらにするか．後者ならlocが減っていくでもいいよな．
+    if(loc > clearLoc-1){ // クリア判定．5分立った時にするか，ある一定以上書き上げたらにするか．後者ならlocが減っていくでもいいよな．
         alert("クリア！");
         loc = 0;
         $('#loc').text(loc);
         typeStart = true;
-        $("#loc").css("left", 140);
-        digit = 1;
         document.getElementById("codeView").value = "_";
         return;
-    }*/
+    }
 
     /* Code部 */
     if(typeStart){
@@ -121,6 +253,20 @@ document.addEventListener("keyup", function(e){
     if(codeLength.length > codeMaxLength){
         document.getElementById("codeView").value = "";
     } // ある程度まで行ったらクリアして最初から
+
+    if(display.num==0){
+        document.getElementById("dualDisplay").value += randomCode(); // ランダムなコード片を追記
+
+        $('#dualDisplay').scrollTop(
+            $('#dualDisplay')[0].scrollHeight - $('#dualDisplay').height()
+        ); // 自動スクロール
+
+        var dualCodeLength = document.getElementById("dualDisplay").value.match(/\n/g); //IE 用
+        //console.log(codeLength.length);
+        if(dualCodeLength.length > codeMaxLength){
+            document.getElementById("dualDisplay").value = "";
+        } // ある程度まで行ったらクリアして最初から
+    }
 });
 
 // ランダムなコード片を返す．コード片は基本的に一行の命令文．たまにfunction(e){}．jsonから適当なコード片を読み込んで追記．

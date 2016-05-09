@@ -13,27 +13,51 @@
     <div id="container">
         <div id="code">
             <textarea cols="20" rows="20" id="codeView" readonly>
+キーをガチャガチャしてLOC
+(Line of Code)を貯めよう．
+LOCでアイテムも買える．
+30000LOCでクリアだ！
+
+キーを押してスタート_
+
+
+　LOC　→
+￣￣￣￣￣￣￣￣￣
+</textarea>
+            <textarea cols="20" rows="20" id="dualDisplay" readonly>
 _
 </textarea>
             <div id="loc">0</div>
         </div>
         <div id="item">
-            <div id="status"></div>
+            <div id="status">
+                <textarea cols="20" rows="20" id="statusView" readonly>
+Status
+￣￣￣￣￣￣￣
+</textarea>
+            </div>
             <div id="member"></div>
+            <div id="message">
+                　
+                <div class="message" id="message1">キー効率が+1<br>まずはここから_</div>
+                <div class="message" id="message2">キー効率を+1<br>あっても損はない_</div>
+                <div class="message" id="message3">キー効率を+100%．<br>2倍だぞ！_</div>
+                　
+                <div class="message" id="message4">1秒ごとに1LOC<br>10個まで_</div>
+                <div class="message" id="message5">5[LOC/sec]<br>多けりゃいいわけでもない_</div>
+                <div class="message" id="message6">エンジニアの効率2倍<br>必要な人員_</div>
+                <div class="message" id="message7">それは人類の夢_<br>　</div>
+            </div>
             <div id="shop">
-                <!-- <input type="button" class="button" value="デュアルディスプレイ [500LOC]" id="button1">
-                <input type="button" class="button" value="高性能マウス [500LOC]" id="button2">
-                <input type="button" class="button" value="ゲーミングキーボード [500LOC]" id="button3">
-                <input type="button" class="button" value="エンジニア [500LOC]" id="button4">
-                <input type="button" class="button" value="プロジェクトマネージャー [500LOC]" id="button5">
-                <input type="button" class="button" value="A.I. [999999999999LOC]" id="button6"> -->
-                <div class="button" id="button1"><div class="itemname">デュアルディスプレイ</div><div class="itemprice">[500LOC]</div></div>
-                <div class="button" id="button2"><div class="itemname">高性能マウス</div><div class="itemprice">[500LOC]</div></div>
-                <div class="button" id="button3"><div class="itemname">ゲーミングキーボード</div><div class="itemprice">[500LOC]</div></div>
-                <div class="button" id="button4"><div class="itemname">IDE</div><div class="itemprice">[500LOC]</div></div>
+                物的資源
+                <div class="button" id="button1"><div class="itemname" id="itemname1">デュアルディスプレイ</div><div class="itemprice">[30LOC]</div></div>
+                <div class="button" id="button2"><div class="itemname">高性能マウス</div><div class="itemprice">[300LOC]</div></div>
+                <div class="button" id="button3"><div class="itemname">IDE</div><div class="itemprice">[500LOC]</div></div>
+                人的資源
+                <div class="button" id="button4"><div class="itemname">bot</div><div class="itemprice">[100LOC]</div></div>
                 <div class="button" id="button5"><div class="itemname">エンジニア</div><div class="itemprice">[500LOC]</div></div>
-                <div class="button" id="button6"><div class="itemname">プロジェクトマネージャー</div><div class="itemprice">[500LOC]</div></div>
-                <div class="button" id="button7"><div class="itemname">A.I.</div><div class="itemprice">[999999999999LOC]</div></div>
+                <div class="button" id="button6"><div class="itemname">プロジェクトマネージャー</div><div class="itemprice">[1000LOC]</div></div>
+                <div class="button" id="button7"><div class="itemname">A.I.</div><div class="itemprice">[999999999LOC]</div></div>
                 <!-- <div id="container_buttons" class="a_demo_five">
                     デュアルディスプレイ [500LOC]
                 </div> -->

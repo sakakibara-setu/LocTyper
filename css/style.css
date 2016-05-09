@@ -8,11 +8,35 @@ body {
 }
 
 #code {
-    width: 400px;
+    width: 300px;
+    height: 600px;
     float: left;
+    align: center;
 }
 
-textarea {
+#codeView {
+    position: relative; /* 相対座標 */
+    background-color: rgb(36, 40,46);
+    border: 0;
+    padding: 10px;
+    font-size: 1.3em;
+    font-family: Arial, sans-serif;
+    color: #aaa;
+    border: solid 1px #ccc;
+    margin: 0 0 0;
+    width: 278px;
+    -webkit-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    -moz-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+#dualDisplay {
+    display: none;
+    position: relative; /* 相対座標．本来の位置に対する相対座標らしい． */
+    float: left;
     background-color: rgb(36, 40,46);
     border: 0;
     padding: 10px;
@@ -21,7 +45,8 @@ textarea {
     color: #aaa;
     border: solid 1px #ccc;
     margin: 0 0 20px;
-    width: 300px;
+    width: 278px;
+    height: 226px;
     -webkit-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
     -moz-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
     box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
@@ -32,8 +57,10 @@ textarea {
 
 #loc {
     position: relative; /* 相対座標 */
-    left: 150px;
-    top: -300px;
+    top: -250px;
+    margin-top: -1.0em;
+    z-index: 2;
+    text-align: center;
     font-size: 3em;
     font-family: Arial, sans-serif;
     color: rgb(14, 26, 45);
@@ -45,32 +72,90 @@ textarea {
 
 #item {
     position: relative;
-    width: 624px;
+    width: 724px;
+    height: 600px;
     float: left;
-    top: auto;
-    left: -45px;
+    align: right;
 }
 
 #status {
 
 }
 
+#statusView {
+    position: relative; /* 相対座標 */
+    float: left;
+    background-color: rgb(36, 40,46);
+    border: 0;
+    padding: 10px;
+    font-size: 1.3em;
+    font-family: Arial, sans-serif;
+    color: #aaa;
+    border: solid 1px #ccc;
+    margin: 200px 20px 20px;
+    width: 338px;
+    height: 280px;
+    -webkit-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    -moz-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
 #member {
 
+}
+
+#message {
+    margin-top: -10px;
+    margin-left: 10px;
+    width: 156px;
+    float: left;
+    color: #fff;
+}
+
+.message {
+    background-color: rgb(35, 36, 61);
+    border: 2px solid #fff;
+    color: #fff;
+    width: 130px;
+    height: 45px;
+    font-size: 0.6em;
+    margin: 5px; /* 他コンテンツとの余白 */
+    padding: 5px; /* borderと文字の間の余白 */
+    vertical-align: middle;
+    border-radius: 7px;
+    -moz-border-radius: 7px;
+    -webkit-border-radius: 7px;
+}
+.message:after {
+    content: "";
+    position: relative;
+    top: 7px;
+    right: -136px;
+    margin-top: -10px;
+    display: block;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 10px 0 10px 10px;
+    border-color: transparent transparent transparent #fff;
 }
 
 #shop {
     width: 156px;
     float: right;
+    color: #fff;
 }
 
 .button {
-	background-color: transparent;
-	border: 2px solid #fff;
-	color: #fff;
-	line-height: 50px; /* heightと同じで文字が中央に来る */
+    background-color: transparent;
+    border: 2px solid #fff;
+    color: #fff;
+    line-height: 45px; /* heightと同じで文字が中央に来る */
     width: 180px;
-    height: 50px;
+    height: 45px;
     font-size: 0.6em;
     margin: 5px; /* 他コンテンツとの余白 */
     padding: 5px; /* borderと文字の間の余白 */
@@ -79,7 +164,7 @@ textarea {
     cursor: default;
 }
 .button:hover {
-	background-color: rgba(255, 255, 255, .2);
+    background-color: rgba(255, 255, 255, .2);
 }
 
 .itemname {
