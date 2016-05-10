@@ -120,13 +120,14 @@ body {
 }
 #statusView .body {
     font-size: 0.9em;
+    visibility: hidden;
 }
 
 .itemnum {
     text-align: right;
 }
 
-.cps {
+#body_math {
     text-align: right;
     font-size: 1.3em;
 }

@@ -59,16 +59,19 @@ var endTime = 180000; // barの終了までの時間．1000=1秒．
 var minute = 2; // タイマーの終了までの時間．分．
 var second = 60; // タイマーの終了までの時間．秒．
 /* アイテム部用-------------------------------------------- */
+var priceRate = 1.5; // アイテムの値段の上がり幅
+
 var item = 0; // アイテム（物的資源）全体による加算値
 var item2 = 1; // itemを倍加する値
 var display = { pow: 1, price: 30, num:1 };
-var mouse = { pow: 1, price: 300, num:1 };
-var ide = { pow: 1, price: 500, num:1 };
+var mouse = { pow: 1, price: 3, num:1 };
+var ide = { pow: 1, price: 1000, num:1 };
 
 var coding; // 周期実行関数用
 var cps = 0; // 周期的にlocに加算される値．アイテム（人的資源）全体による加算値．
 var cps2 = 1; // cpsを倍加する値
 var bot = { pow: 10, price: 100, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
+var botNum = 0;
 var engineer = { pow: 80, price: 500, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
 var engineerNum = 0; // 現在のエンジニア数
 var maneger = { pow: 1, price: 8000, num:1 }; // pow:プロジェクトマネージャーによる乗算値（pow:1 = cps+100%），price:必要なLOC量．
@@ -84,6 +87,7 @@ window.addEventListener("load", init);
 // 初期設定
 function init(){
     $('#codeView').focus();
+    $('#body_default').css('visibility', 'visible');
     timerSetup();
     itemSetup();
 }
@@ -181,6 +185,12 @@ function itemSetup(){
 
             // メッセージ更新
             message = "優れたエンジニアには，<br>優れた環境を．";
+
+            // ステータス画面更新
+            $('#body_default').css('visibility', 'hidden');
+            $('#item1').css('visibility', 'visible');
+            $('#body_math').css('visibility', 'visible');
+            $('#key').text(String((1 + item)*item2-1));
         }
     });
     $('#button2').click(function(){
@@ -190,7 +200,11 @@ function itemSetup(){
             item += mouse.pow; // キー効率を+1．あっても損はない．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
 
-            // エフェクト．マウスの画像を追加
+            // エフェクト．マウスカーソルを変更．
+            $('body').css("cursor", "url(images/cursor.png), text");
+            $('#codeView').css("cursor", "url(images/cursor.png), text");
+            $('#dualDisplay').css("cursor", "url(images/cursor.png), text");
+            $('.button').css("cursor", "url(images/cursor.png), text");
 
             // ボタンをオフに
             $('#button2').css("color", "rgb(0, 0, 0)");
@@ -199,6 +213,12 @@ function itemSetup(){
 
             // メッセージ更新
             message = "あなたは<br>何処のメーカー？";
+
+            // ステータス画面更新
+            $('#body_default').css('visibility', 'hidden');
+            $('#item2').css('visibility', 'visible');
+            $('#body_math').css('visibility', 'visible');
+            $('#key').text(String((1 + item)*item2-1));
         }
     });
     $('#button3').click(function(){
@@ -219,6 +239,12 @@ function itemSetup(){
 
             // メッセージ更新
             message = "失敗は少なく，<br>多くを学べ．";
+
+            // ステータス画面更新
+            $('#body_default').css('visibility', 'hidden');
+            $('#item3').css('visibility', 'visible');
+            $('#body_math').css('visibility', 'visible');
+            $('#key').text(String((1 + item)*item2-1));
         }
     });
     $('#button4').click(function(){
@@ -227,6 +253,10 @@ function itemSetup(){
             loc -= bot.price;
             cps += bot.pow; // 1秒ごとに1LOC書いてくれる．10個まで．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
+
+            // 値段更新
+            bot.price = Math.floor(bot.price * priceRate);
+            $('#button4 > .itemprice').text("[" + String(bot.price) + "LOC]");
 
             // エフェクト．botの画像を追加
 
@@ -244,6 +274,14 @@ function itemSetup(){
             } else if(bot.num <= 8) {
                 message = "botも，<br>学習する．"
             }
+
+            // ステータス画面更新
+            botNum++;
+            $('#body_default').css('visibility', 'hidden');
+            $('#item4').css('visibility', 'visible');
+            $('#item4 > .itemnum').text("×" + String(botNum));
+            $('#body_math').css('visibility', 'visible');
+            $('#cps').text(String(cps*cps2));
         }
     });
     $('#button5').click(function(){
@@ -252,7 +290,23 @@ function itemSetup(){
             loc -= engineer.price;
             cps += engineer.pow; // 5LOC/sec．多けりゃいいってものでもない．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
+            engineerNum++;
+
             // ただし残り1分では，cpsが増えない．メッセージを表示．
+            // というかpowが下がっていく．
+            if(engineerNum==1){
+                engineer.pow = Math.floor(engineer.pow / 1.5);
+            } else if(engineerNum==2){
+                engineer.pow = Math.floor(engineer.pow / 2);
+            } else if(engineerNum==3){
+                engineer.pow = Math.floor(engineer.pow / 3);
+            } else if(engineerNum>=4){
+                engineer.pow = Math.floor(engineer.pow / (engineerNum*engineerNum));
+            }
+
+            // 値段更新
+            engineer.price = Math.floor(engineer.price * priceRate);
+            $('#button5 > .itemprice').text("[" + String(engineer.price) + "LOC]");
 
             // エフェクト．エンジニアの画像を追加
 
@@ -270,6 +324,13 @@ function itemSetup(){
             } else if(engineer.num <= 8) {
                 message = "たくさんいればいるほど，<br>連携が難しい．"
             }
+
+            // ステータス画面更新
+            $('#body_default').css('visibility', 'hidden');
+            $('#item5').css('visibility', 'visible');
+            $('#item5 > .itemnum').text("×" + String(engineerNum));
+            $('#body_math').css('visibility', 'visible');
+            $('#cps').text(String(cps*cps2));
         }
     });
     $('#button6').click(function(){
@@ -290,6 +351,12 @@ function itemSetup(){
 
             // メッセージ更新
             message = "マネジメントとは，”制御”だ．<br>自分を理解することから始まる．";
+
+            // ステータス画面更新
+            $('#body_default').css('visibility', 'hidden');
+            $('#item6').css('visibility', 'visible');
+            $('#body_math').css('visibility', 'visible');
+            $('#cps').text(String(cps*cps2));
         }
     });
     $('#button7').click(function(){
