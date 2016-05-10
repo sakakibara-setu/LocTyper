@@ -16,7 +16,7 @@ body {
 
 #codeView {
     position: relative; /* 相対座標 */
-    background-color: rgb(36, 40,46);
+    background-color: rgb(28, 31, 34);
     border: 0;
     padding: 10px;
     font-size: 1.3em;
@@ -37,7 +37,7 @@ body {
     display: none;
     position: relative; /* 相対座標．本来の位置に対する相対座標らしい． */
     float: left;
-    background-color: rgb(36, 40,46);
+    background-color: rgb(28, 31, 34);
     border: 0;
     padding: 10px;
     font-size: 1.3em;
@@ -79,7 +79,24 @@ body {
 }
 
 #status {
+    position: relative;
+    float: left;
+    margin: 0px 20px 20px;
+}
 
+#text {
+    position: relative;
+    font-size: 1.3em;
+    font-weight: 800;
+    text-align: center;
+    vertical-align: middle;
+    color: #171616;
+    margin-top: 65px;
+    margin-bottom: 65px;
+    text-shadow:
+    0 0 12px #edf8ff,
+    0 0 10px #edf8ff,
+    0 0 0.20px #edf8ff;
 }
 
 #statusView {
@@ -88,19 +105,30 @@ body {
     background-color: rgb(36, 40,46);
     border: 0;
     padding: 10px;
-    font-size: 1.3em;
     font-family: Arial, sans-serif;
     color: #aaa;
-    border: solid 1px #ccc;
-    margin: 200px 20px 20px;
+    border-top   :solid 5px #ccc;
+    border-right :none;
+    border-bottom:solid 5px #ccc;
+    border-left  :none;
     width: 338px;
     height: 280px;
-    -webkit-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
-    -moz-box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
-    box-shadow: 0px 1px rgba(255, 255, 255, 0.5);
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
+}
+#statusView .title {
+    text-decoration:underline;
+    font-size: 1.3em;
+}
+#statusView .body {
+    font-size: 0.9em;
+}
+
+.itemnum {
+    text-align: right;
+}
+
+.cps {
+    text-align: right;
+    font-size: 1.3em;
 }
 
 #member {

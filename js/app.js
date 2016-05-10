@@ -17,14 +17,14 @@ TODO
 エンジニアは購入後，動き出すまで時間が多少かかる．二人目からは指数的に減っていく．円のプログレスバーを半透明なエンジニアの上に置く感じか．
 botは購入後，即座に動き出すが，あまり書いてくれない．
 
-クリア時のスコア表示．
-タイムアップ時のスコア表示．
-リセット．
-吹き出し．
+クリア時のスコア表示． ok
+タイムアップ時のスコア表示． いるかな？
+リセット． 更新してもらおう．
+吹き出し． ok
 エフェクト．
 ステータス．アイテム購入時にステータス画面更新．
 
-5秒ごとに前のメッセージと今のメッセージが違っているか判定し，違っていればフェードアニメーションで更新．
+5秒ごとに前のメッセージと今のメッセージが違っているか判定し，違っていればフェードアニメーションで更新． ok
 
 ・アイテム購入時．
 優れたエンジニアには，優れた環境を．
@@ -42,6 +42,8 @@ botは素直だが，多くはできない．
 まだ余裕．
 間に合うか．
 
+値段変化．
+
 */
 
 /* LOCカウント部用-------------------------------------------- */
@@ -49,6 +51,7 @@ var typeStart = true; // ゲーム開始判定．true=まだ始まっていな�
 var codeMaxLength = 30; // codeViewクリアまでの最大行数．
 var loc = 0; // LOC．これがclearLoc分貯まればクリア．
 var clearLoc = 30000; // クリアに必要なloc．
+var clear = false;
 /* タイマー部用-------------------------------------------- */
 var timer; // 周期実行関数用
 var bar; // プログレスバー用
@@ -68,13 +71,19 @@ var cps2 = 1; // cpsを倍加する値
 var bot = { pow: 10, price: 100, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
 var engineer = { pow: 80, price: 500, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
 var engineerNum = 0; // 現在のエンジニア数
-var maneger = { pow: 1, price: 1000, num:1 }; // pow:プロジェクトマネージャーによる乗算値（pow:1 = cps+100%），price:必要なLOC量．
+var maneger = { pow: 1, price: 8000, num:1 }; // pow:プロジェクトマネージャーによる乗算値（pow:1 = cps+100%），price:必要なLOC量．
 var ai = { pow:1, price: 999999999, num:1 };
+/* メッセージ部用-------------------------------------------- */
+var message = "";
+var preMessage = "";
+var messageReloader;
+var messageSwitch = 3;
 
 window.addEventListener("load", init);
 
 // 初期設定
 function init(){
+    $('#codeView').focus();
     timerSetup();
     itemSetup();
 }
@@ -111,11 +120,14 @@ function timerStart(){
     timer = setInterval(function() {
         if(second == 0){
             if(minute == 0){
-                alert("タイムアップ！");
+                alert("タイムアップ！（まだ続けられるよ）");
                 clearInterval(timer);
                 return;
             } else if(minute == 1){
                 $(document.body).css("background", 'rgb(149, 14, 14)');
+                message = "間に合うか<br>　";
+            } else if(minute == 2){
+                message = "まだ<br>余裕";
             }
             second = 60;
             minute--;
@@ -134,13 +146,18 @@ function itemSetup(){
         loc += cps * cps2;
         $('#loc').text(loc);
 
-        if(loc > clearLoc-1){
-            alert("クリア！");
-            loc = 0;
-            $('#loc').text(loc);
-            typeStart = true;
-            document.getElementById("codeView").value = "_";
-            return;
+        if(!clear){
+            if(loc > clearLoc-1){
+                alert("納品完了！（まだ続けられるよ）");
+                message = "スコア：<br>" + String(minute) + "分" + String(second) + "秒";
+                clearInterval(timer);
+                //loc = 0;
+                //$('#loc').text(loc);
+                //typeStart = true;
+                //document.getElementById("codeView").value = "_";
+                clear = true;
+                return;
+            }
         }
     }, 1000);
 
@@ -157,8 +174,13 @@ function itemSetup(){
             $('#dualDisplay').fadeIn();
             $('#loc').css('top', -315 + 'px');
 
-            // 取り消し線
-            //$('#button1').css("background-color", "rgb(66, 65, 63)");
+            // ボタンをオフに
+            $('#button1').css("color", "rgb(0, 0, 0)");
+            $('#button1').css("border", "solid 2px rgb(0, 0, 0)");
+            $('#message1').css("visibility", "hidden");
+
+            // メッセージ更新
+            message = "優れたエンジニアには，<br>優れた環境を．";
         }
     });
     $('#button2').click(function(){
@@ -169,6 +191,14 @@ function itemSetup(){
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
 
             // エフェクト．マウスの画像を追加
+
+            // ボタンをオフに
+            $('#button2').css("color", "rgb(0, 0, 0)");
+            $('#button2').css("border", "solid 2px rgb(0, 0, 0)");
+            $('#message2').css("visibility", "hidden");
+
+            // メッセージ更新
+            message = "あなたは<br>何処のメーカー？";
         }
     });
     $('#button3').click(function(){
@@ -181,43 +211,105 @@ function itemSetup(){
             // エフェクト．画面をIDE化
             $('#codeView').css('background-color', "#054114");
             $('#dualDisplay').css('background-color', "#054114");
+
+            // ボタンをオフに
+            $('#button3').css("color", "rgb(0, 0, 0)");
+            $('#button3').css("border", "solid 2px rgb(0, 0, 0)");
+            $('#message3').css("visibility", "hidden");
+
+            // メッセージ更新
+            message = "失敗は少なく，<br>多くを学べ．";
         }
     });
     $('#button4').click(function(){
         if((loc > bot.price) && (bot.num > 0)){
+            bot.num--;
             loc -= bot.price;
             cps += bot.pow; // 1秒ごとに1LOC書いてくれる．10個まで．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
 
             // エフェクト．botの画像を追加
+
+            if(bot.num <= 0){
+                // ボタンをオフに
+                $('#button4').css("color", "rgb(0, 0, 0)");
+                $('#button4').css("border", "solid 2px rgb(0, 0, 0)");
+                $('#message4').css("visibility", "hidden");
+            }
+
+            // メッセージ更新
+            message = "botは素直だが，<br>多くはできない．";
+            if(bot.num <= 5) {
+                message = "ちりも積もれば．<br>　"
+            } else if(bot.num <= 8) {
+                message = "botも，<br>学習する．"
+            }
         }
     });
     $('#button5').click(function(){
         if((loc > engineer.price) && (engineer.num > 0)){
+            engineer.num--;
             loc -= engineer.price;
             cps += engineer.pow; // 5LOC/sec．多けりゃいいってものでもない．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
             // ただし残り1分では，cpsが増えない．メッセージを表示．
 
             // エフェクト．エンジニアの画像を追加
+
+            if(engineer.num <= 0){
+                // ボタンをオフに
+                $('#button5').css("color", "rgb(0, 0, 0)");
+                $('#button5').css("border", "solid 2px rgb(0, 0, 0)");
+                $('#message5').css("visibility", "hidden");
+            }
+
+            // メッセージ更新
+            message = "エンジニアには<br>”教育”が必要だ．";
+            if(engineer.num <= 5) {
+                message = "人月の神話．<br>　"
+            } else if(engineer.num <= 8) {
+                message = "たくさんいればいるほど，<br>連携が難しい．"
+            }
         }
     });
     $('#button6').click(function(){
         if((loc > maneger.price) && (maneger.num > 0)){
+            maneger.num--;
             loc -= maneger.price;
             cps2 += maneger.pow; // lpsを+100%．すごい．
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
 
             // エフェクト．マネージャーの画像を追加
+
+            if(maneger.num <= 0){
+                // ボタンをオフに
+                $('#button6').css("color", "rgb(0, 0, 0)");
+                $('#button6').css("border", "solid 2px rgb(0, 0, 0)");
+                $('#message6').css("visibility", "hidden");
+            }
+
+            // メッセージ更新
+            message = "マネジメントとは，”制御”だ．<br>自分を理解することから始まる．";
         }
     });
     $('#button7').click(function(){
         if((loc > ai.price) && (ai.num > 0)){
+            ai.num--;
             loc -= ai.price;
             $('#loc').text(loc); // 購入した時点でlocの表示を更新
 
+            if(ai.num <= 0){
+                // ボタンをオフに
+                $('#button7').css("color", "rgb(0, 0, 0)");
+                $('#button7').css("border", "solid 2px rgb(0, 0, 0)");
+                $('#message7').css("visibility", "hidden");
+            }
+
             // エフェクト．辿り着いた者．
+
+            message = "辿り着いた者．<br>　";
         }
+        message = "まだ遠い．<br>　";
     });
 }
 
@@ -226,13 +318,28 @@ document.addEventListener("keyup", function(e){
     /* LOCカウント部 */
     loc += (1 + item)*item2; // アイテムに応じて増加量を変更．
     $('#loc').text(loc);
-    if(loc > clearLoc-1){ // クリア判定．5分立った時にするか，ある一定以上書き上げたらにするか．後者ならlocが減っていくでもいいよな．
-        alert("クリア！");
-        loc = 0;
-        $('#loc').text(loc);
-        typeStart = true;
-        document.getElementById("codeView").value = "_";
-        return;
+    if(!clear){
+        if(loc > clearLoc-1){ // クリア判定．5分立った時にするか，ある一定以上書き上げたらにするか．後者ならlocが減っていくでもいいよな．
+            alert("納品完了！（まだ続けられるよ）");
+            message = "スコア：<br>" + String(minute) + "分" + String(second) + "秒";
+            clearInterval(timer);
+            //loc = 0;
+            //$('#loc').text(loc);
+            //typeStart = true;
+            //document.getElementById("codeView").value = "_";
+            clear = true;
+            return;
+        }
+    }
+    if((loc > 500) && (messageSwitch == 3)){
+        message = "まずは<br>それなり";
+        messageSwitch--;
+    } else if((loc > 5000) && (messageSwitch == 2)){
+        message = "ここまで<br>来た";
+        messageSwitch--;
+    } else if((loc > 20000) && (messageSwitch == 1)){
+        message = "あと<br>もう少し";
+        messageSwitch--;
     }
 
     /* Code部 */
@@ -240,6 +347,21 @@ document.addEventListener("keyup", function(e){
         document.getElementById("codeView").value = "function func(e){" + "\n" + "    var start=\"start!\"" + "\n";
         typeStart = false;
         timerStart();
+        $('#text').fadeOut('slow', function(){
+            $('#text').html("ここからが<br/>始まり");
+        });
+        $('#text').fadeIn('slow');
+
+        // メッセージを周期的に確認して変更があれば更新する
+        messageReloader = setInterval(function() {
+            if(message != preMessage){
+                $('#text').fadeOut('slow', function(){
+                    $('#text').html(message);
+                });
+                $('#text').fadeIn('slow');
+                preMessage = message;
+            }
+        }, 1000);
     }
 
     document.getElementById("codeView").value += randomCode(); // ランダムなコード片を追記
