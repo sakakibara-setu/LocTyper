@@ -167,8 +167,9 @@ function itemSetup(){
                 $('#button5').css("color", "#fff");
                 $('#button5').css("border", "2px solid #fff");
                 $('#message5').css("visibility", "visible");
+                $('#message5').html("決して疲れず，<br>圧倒的な生産性を誇る．");
                 engineer.price = 10000;
-                engineer.pow = 9999;
+                engineer.pow = 999;
                 engineer.num = 50;
                 $('#button5 > .itemname').text("機械兵士");
                 $('#button5 > .itemprice').text("[" + String(engineer.price) + "LOC]");
@@ -352,6 +353,8 @@ function itemSetup(){
                 $('#item5 > .itemnum').text("×" + String(engineerNum));
                 $('#body_math').css('visibility', 'visible');
                 $('#cps').text(String(cps*cps2));
+            } else {
+                $('#cps').text(String(cps*cps2));
             }
         }
     });
@@ -400,7 +403,11 @@ function itemSetup(){
             $('#loc').text("∞");
             $('#loc').css("font-size", "20em");
             $('#loc').css("color", "rgb(255, 0, 0)");
-            $('#loc').css("top", "-150px");
+            if(display.num==0){
+                $('#loc').css('top', "-470px");
+            } else{
+                $('#loc').css("top", "-150px");
+            }
 
             clearInterval(coding);
         }
@@ -427,12 +434,13 @@ document.addEventListener("keyup", function(e){
             //typeStart = true;
             //document.getElementById("codeView").value = "_";
 
-            // クリアするとエンジニアが機械兵士になって復活する．ステータス画面には反映されない．
+            // クリアするとエンジニアが機械兵士になって復活する．ステータス画面には反映されない．CPSのみ反映される．
             $('#button5').css("color", "#fff");
             $('#button5').css("border", "2px solid #fff");
             $('#message5').css("visibility", "visible");
+            $('#message5').html("決して疲れず，<br>圧倒的な生産性を誇る．");
             engineer.price = 10000;
-            engineer.pow = 9999;
+            engineer.pow = 999;
             engineer.num = 50;
             $('#button5 > .itemname').text("機械兵士");
             $('#button5 > .itemprice').text("[" + String(engineer.price) + "LOC]");
