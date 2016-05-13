@@ -48,7 +48,7 @@ botは素直だが，多くはできない．
 
 /* LOCカウント部用-------------------------------------------- */
 var typeStart = true; // ゲーム開始判定．true=まだ始まっていない．
-var codeMaxLength = 30; // codeViewクリアまでの最大行数．
+var codeMaxLength = 60; // codeViewクリアまでの最大行数．
 var loc = 0; // LOC．これがclearLoc分貯まればクリア．
 var clearLoc = 30000; // クリアに必要なloc．
 var clear = false;
@@ -72,10 +72,10 @@ var cps = 0; // 周期的にlocに加算される値．アイテム（人的資�
 var cps2 = 1; // cpsを倍加する値
 var bot = { pow: 10, price: 100, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
 var botNum = 0;
-var engineer = { pow: 80, price: 500, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
+var engineer = { pow: 100, price: 500, num:10 }; // pow:エンジニアによる加算値，price:必要なLOC量，num:残り数量．
 var engineerNum = 0; // 現在のエンジニア数
 var maneger = { pow: 1, price: 8000, num:1 }; // pow:プロジェクトマネージャーによる乗算値（pow:1 = cps+100%），price:必要なLOC量．
-var ai = { pow:1, price: 999999999, num:1 };
+var ai = { pow:1, price: 999999, num:1 };
 /* メッセージ部用-------------------------------------------- */
 var message = "";
 var preMessage = "";
@@ -126,6 +126,7 @@ function timerStart(){
             if(minute == 0){
                 alert("タイムアップ！（まだ続けられるよ）");
                 clearInterval(timer);
+                $(document.body).css("background", 'rgb(6, 2, 82)');
                 return;
             } else if(minute == 1){
                 $(document.body).css("background", 'rgb(149, 14, 14)');
@@ -152,13 +153,26 @@ function itemSetup(){
 
         if(!clear){
             if(loc > clearLoc-1){
-                alert("納品完了！（まだ続けられるよ）");
+                alert("納品完了！（ゲームはまだ続けられるよ）");
                 message = "スコア：<br>" + String(minute) + "分" + String(second) + "秒";
+                $(document.body).css("background", 'rgb(6, 2, 82)');
                 clearInterval(timer);
+                bar.stop();
                 //loc = 0;
                 //$('#loc').text(loc);
                 //typeStart = true;
                 //document.getElementById("codeView").value = "_";
+
+                // クリアするとエンジニアが機械兵士になって復活する．ステータス画面には反映されない．
+                $('#button5').css("color", "#fff");
+                $('#button5').css("border", "2px solid #fff");
+                $('#message5').css("visibility", "visible");
+                engineer.price = 10000;
+                engineer.pow = 9999;
+                engineer.num = 50;
+                $('#button5 > .itemname').text("機械兵士");
+                $('#button5 > .itemprice').text("[" + String(engineer.price) + "LOC]");
+
                 clear = true;
                 return;
             }
@@ -294,14 +308,16 @@ function itemSetup(){
 
             // ただし残り1分では，cpsが増えない．メッセージを表示．
             // というかpowが下がっていく．
-            if(engineerNum==1){
-                engineer.pow = Math.floor(engineer.pow / 1.5);
-            } else if(engineerNum==2){
-                engineer.pow = Math.floor(engineer.pow / 2);
-            } else if(engineerNum==3){
-                engineer.pow = Math.floor(engineer.pow / 3);
-            } else if(engineerNum>=4){
-                engineer.pow = Math.floor(engineer.pow / (engineerNum*engineerNum));
+            if(clear==false){
+                if(engineerNum==1){
+                    engineer.pow = Math.floor(engineer.pow / 1.5);
+                } else if(engineerNum==2){
+                    engineer.pow = Math.floor(engineer.pow / 2);
+                } else if(engineerNum==3){
+                    engineer.pow = Math.floor(engineer.pow / 3);
+                } else if(engineerNum>=4){
+                    engineer.pow = Math.floor(engineer.pow / (engineerNum*engineerNum));
+                }
             }
 
             // 値段更新
@@ -318,19 +334,25 @@ function itemSetup(){
             }
 
             // メッセージ更新
-            message = "エンジニアには<br>”教育”が必要だ．";
-            if(engineer.num <= 5) {
-                message = "人月の神話．<br>　"
-            } else if(engineer.num <= 8) {
-                message = "たくさんいればいるほど，<br>連携が難しい．"
+            if(clear==true){
+                message = "寡黙な機械兵士は<br>夢を見るか？";
+            } else {
+                message = "エンジニアには<br>”教育”が必要だ．";
+                if(engineer.num <= 5) {
+                    message = "人月の神話．<br>　"
+                } else if(engineer.num <= 8) {
+                    message = "たくさんいればいるほど，<br>連携が難しい．"
+                }
             }
 
             // ステータス画面更新
-            $('#body_default').css('visibility', 'hidden');
-            $('#item5').css('visibility', 'visible');
-            $('#item5 > .itemnum').text("×" + String(engineerNum));
-            $('#body_math').css('visibility', 'visible');
-            $('#cps').text(String(cps*cps2));
+            if(clear==false){
+                $('#body_default').css('visibility', 'hidden');
+                $('#item5').css('visibility', 'visible');
+                $('#item5 > .itemnum').text("×" + String(engineerNum));
+                $('#body_math').css('visibility', 'visible');
+                $('#cps').text(String(cps*cps2));
+            }
         }
     });
     $('#button6').click(function(){
@@ -375,8 +397,16 @@ function itemSetup(){
             // エフェクト．辿り着いた者．
 
             message = "辿り着いた者．<br>　";
+            $('#loc').text("∞");
+            $('#loc').css("font-size", "20em");
+            $('#loc').css("color", "rgb(255, 0, 0)");
+            $('#loc').css("top", "-150px");
+
+            clearInterval(coding);
         }
-        message = "まだ遠い．<br>　";
+        else {
+            message = "まだ遠い．<br>　";
+        }
     });
 }
 
@@ -389,11 +419,24 @@ document.addEventListener("keyup", function(e){
         if(loc > clearLoc-1){ // クリア判定．5分立った時にするか，ある一定以上書き上げたらにするか．後者ならlocが減っていくでもいいよな．
             alert("納品完了！（まだ続けられるよ）");
             message = "スコア：<br>" + String(minute) + "分" + String(second) + "秒";
+            $(document.body).css("background", 'rgb(6, 2, 82)');
             clearInterval(timer);
+            bar.stop();
             //loc = 0;
             //$('#loc').text(loc);
             //typeStart = true;
             //document.getElementById("codeView").value = "_";
+
+            // クリアするとエンジニアが機械兵士になって復活する．ステータス画面には反映されない．
+            $('#button5').css("color", "#fff");
+            $('#button5').css("border", "2px solid #fff");
+            $('#message5').css("visibility", "visible");
+            engineer.price = 10000;
+            engineer.pow = 9999;
+            engineer.num = 50;
+            $('#button5 > .itemname').text("機械兵士");
+            $('#button5 > .itemprice').text("[" + String(engineer.price) + "LOC]");
+
             clear = true;
             return;
         }
@@ -412,6 +455,8 @@ document.addEventListener("keyup", function(e){
     /* Code部 */
     if(typeStart){
         document.getElementById("codeView").value = "function func(e){" + "\n" + "    var start=\"start!\"" + "\n";
+        $('#codeView').css("font-size", "0.5em");
+        document.getElementById("codeView").wrap = 'off';
         typeStart = false;
         timerStart();
         $('#text').fadeOut('slow', function(){
@@ -461,7 +506,7 @@ document.addEventListener("keyup", function(e){
 // ランダムなコード片を返す．コード片は基本的に一行の命令文．たまにfunction(e){}．jsonから適当なコード片を読み込んで追記．
 function randomCode(){
     var code = "";
-    var rand = Math.floor(Math.random() * 11) ;
+    var rand = Math.floor(Math.random() * 52) ;
 
     switch (rand){
         case 0:
@@ -486,25 +531,148 @@ function randomCode(){
             code += "    }" + "\n";
             break;
         case 4:
-            code = "    printf();" + "\n";
+            code = "    var options = {filename: filePath};" + "\n";
             break;
         case 5:
-            code = "    printf();" + "\n";
+            code = "    Logger.prototype.debug = noop;" + "\n";
             break;
         case 6:
-            code = "    printf();" + "\n";
+            code = "    for (var key in defaultOptions) {" + "\n" + "        options[key] = defaultOptions[key]" + "\n" + "    }" + "\n";
             break;
         case 7:
-            code = "    printf();" + "\n";
+            code = "    .update(JSON.stringify(options), 'utf8');" + "\n";
             break;
         case 8:
-            code = "    printf();" + "\n";
+            code = "    return crypto;" + "\n";
             break;
         case 9:
-            code = "    printf();" + "\n";
+            code = "    return babel.transform(sourceCode, options).code;" + "\n";
             break;
         case 10:
-            code = "    printf();" + "\n";
+            code = "    var start = sourceCode.substr(0, PREFIX_LENGTH);" + "\n";
+            break;
+        case 11:
+            code = "    createHash('sha1');" + "\n";
+            break;
+        case 12:
+            code = "    var defaultOptions = require('../static/babelrc.json');" + "\n";
+            break;
+        case 13:
+            code = "    this.subscriptions = new CompositeDisposable();" + "\n";
+            break;
+        case 14:
+            code = "    " + "\n";
+            break;
+        case 15:
+            code = "    this.applicationDelegate.checkForUpdate();" + "\n";
+            break;
+        case 16:
+            code = "    return atom.getReleaseChannel() !== 'dev' && this.getState() !== 'unsupported';" + "\n";
+            break;
+        case 17:
+            code = "    CSON = require('season');" + "\n";
+            break;
+        case 18:
+            code = "    var cachePath = compiler.getCachePath(sourceCode, filePath);" + "\n";
+            break;
+        case 19:
+            code = "    fs.writeFileSync(cachePath, code, 'utf8');" + "\n";
+            break;
+        case 20:
+            code = "    filePath = '/' + path.resolve(filePath).replace(/\\/g, '/');" + "\n";
+            break;
+        case 21:
+            code = "    if (!cacheDirectory || !fs.isFileSync(filePath)) { " + "\n" + "        return null;" + "\n" + "    }" + "\n";
+            break;
+        case 22:
+            code = "    console.warn('Error reading source file', error.stack);" + "\n";
+            break;
+        case 23:
+            code = "    var compiler = COMPILERS[extension];" + "\n";
+            break;
+        case 24:
+            code = "    currentTarget = currentTarget.parentNode;" + "\n";
+            break;
+        case 25:
+            code = "    if (currentTarget === element) break;" + "\n";
+            break;
+        case 26:
+            code = "    const EventKit = require('event-kit');" + "\n";
+            break;
+        case 27:
+            code = "    var BrowserWindow = null;" + "\n";
+        break;
+        case 28:
+            code = "    resolve(result);" + "\n";
+            break;
+        case 29:
+            code = "    event.sender.send(responseChannel, result);" + "\n";
+            break;
+        case 30:
+            code = "    var result = callback(browserWindow, ...args);" + "\n";
+            break;
+        case 31:
+            code = "    ipcRenderer.removeAllListeners(responseChannel);" + "\n";
+            break;
+        case 32:
+            code = "    dbOpenRequest.onsuccess = () => {" + "\n" + "        resolve(dbOpenRequest.result);" + "\n" + "    }" + "\n";
+            break;
+        case 33:
+            code = "    if (!db) return;" + "\n";
+            break;
+        case 34:
+            code = "    request.onsuccess = resolve;" + "\n";
+            break;
+        case 35:
+            code = "    request.onerror = reject;" + "\n";
+        break;
+        case 36:
+            code = "    Tooltip.TRANSITION_DURATION = 150;" + "\n";
+            break;
+        case 37:
+            code = "    this.enabled = true;" + "\n";
+            break;
+        case 38:
+            code = "    eventIn = 'mouseenter';" + "\n";
+            break;
+        case 39:
+            code = "    var options = {};" + "\n";
+            break;
+        case 40:
+            code = "    clearTimeout(this.timeout);" + "\n";
+            break;
+        case 41:
+            code = "    tip.setAttribute('id', tipId);" + "\n";
+            break;
+        case 42:
+            code = "    document.body.appendChild(tip);" + "\n";
+            break;
+        case 43:
+            code = "    tip.classList.add(placement);" + "\n";
+            break;
+        case 44:
+            code = "    if (delta.left) offset.left += delta.left;" + "\n";
+            break;
+        case 45:
+            code = "    arrow.style.left = amount;" + "\n";
+            break;
+        case 46:
+            code = "    var amount = 50 * (1 - delta / dimension) + '%';" + "\n";
+            break;
+        case 47:
+            code = "    div.innerHTML = this.options.template;" + "\n";
+            break;
+        case 48:
+            code = "    let div = document.createElement('div');" + "\n";
+            break;
+        case 49:
+            code = "    this.enabled = false;" + "\n";
+            break;
+        case 50:
+            code = "    var args = Array.prototype.slice.apply(arguments);" + "\n";
+            break;
+        case 51:
+            code = "    this.enabled = !this.enabled;" + "\n";
             break;
     }
 
