@@ -10,6 +10,12 @@ LOCを消費，つまり多少の負担を負うことで，他のエンジニ�
 納期までに目標のLOCを達成し，プロダクトを開発できるか！？
 
 ## 遊び方
+### ブラウザで遊ぶ場合
+以下のサイトより遊べます．
+
+https://loctyper.herokuapp.com/loctyper.html
+
+### ローカルで遊ぶ場合
 gitcloneかZIP Downloadで，本体をダウンロード．
 
 index.htmlを開けば，準備完了！
